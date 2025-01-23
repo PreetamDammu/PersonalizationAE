@@ -3,6 +3,7 @@ from pyserini.search.lucene import LuceneSearcher
 import json
 import sys
 import os
+import re
 
 FOLDER_PATH = os.path.dirname(__file__)
 def load_searcher():
@@ -46,3 +47,24 @@ search_product_by_query.__info__ = {
 }
 
 bm25_searcher = load_searcher()
+
+
+# res = search_product_by_query("Top-quality vacuum parts: filters, brushes, affordable, trusted brand!")
+# print(res)
+
+# print(len(res))
+
+# #save results to a file
+# with open('search_results.txt', 'w') as f:
+#     for item in res:
+#         f.write("%s\n" % item)
+        
+ 
+
+# res_string = [str(i) for i in res]
+# res = ' '.join(res_string)
+# # Use re.findall to get all matches in a list
+# pattern = r"Parent Asin:\s*(\S+)" 
+# parent_asins = re.findall(pattern, res)
+
+# print(parent_asins)

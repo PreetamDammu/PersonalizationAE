@@ -3,3 +3,7 @@ inputs
 outputs
 *__pycache__*
 exp.ipynb
+*.log
+res_backup
+exp_pwab.ipynb
+exp_pae.ipynb

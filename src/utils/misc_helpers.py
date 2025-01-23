@@ -1,37 +1,40 @@
 import json
-import os
+import re
 
-def save_as_jsonl(data, file_path):
-    """
-    Saves a list of dictionaries to a .jsonl file.
+def load_json(files, data_dir='/home/ec2-user/code_repos/PersonalizationAE/inputs/pwab_data'):
+    if isinstance(files, str):
+        with open(f"{data_dir}/{files}", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            print(f"Loaded {len(data)} records from {files}")
+            return data
 
-    Args:
-        data (list): A list of dictionaries to be saved.
-        file_path (str): Path to the output .jsonl file.
+    elif isinstance(files, list):
+        
+        combined_data = []
+        for filepath in files:
+            with open(f"{data_dir}/{filepath}", "r", encoding="utf-8") as f:
+                data = json.load(f)
+                combined_data.append(data)
+                print(f"Loaded {len(data)} records from {filepath}")
+                
+        # if combined_data is a list of lists, flatten it
+        if isinstance(combined_data[0], list):
+            combined_data = [item for sublist in combined_data for item in sublist]
+        # if combined_data is a list of dicts, combine them
+        elif isinstance(combined_data[0], dict):
+            combined_data = {k: v for d in combined_data for k, v in d.items()}
+        else:
+            raise ValueError("Data must be a list of lists or a list of dicts.")
+        return combined_data
 
-    Raises:
-        ValueError: If the data is not a list of dictionaries.
-    """
-    if not isinstance(data, list) or not all(isinstance(item, dict) for item in data):
-        raise ValueError("Input data must be a list of dictionaries.")
+    else:
+        raise ValueError("Argument must be either a single file path (string) or a list of file paths.")
 
-    with open(file_path, 'w') as file:
-        for entry in data:
-            file.write(json.dumps(entry) + '\n')
-            
-def read_jsonl_file(file_path):
-    """
-    Reads a JSON Lines (JSONL) file where each line is a separate JSON object.
-    Returns a list of Python dictionaries (or other data structures if the JSON
-    objects are not strictly dictionaries).
-    
-    :param file_path: Path to the .jsonl file
-    :return: A list of deserialized JSON objects
-    """
-    data = []
-    with open(file_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            line = line.strip()
-            if line:  # Skip any empty lines
-                data.append(json.loads(line))
-    return data
+
+def extract_prod_id_ranked(ranked_products):
+    res_string = [str(i) for i in ranked_products]
+    prod_ranked_text = ' '.join(res_string)
+    # Use re.findall to get all matches in a list
+    pattern = r"Parent Asin:\s*(\S+)" 
+    parent_asins = re.findall(pattern, prod_ranked_text)
+    return parent_asins
