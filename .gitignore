@@ -1,6 +1,6 @@
 logs
-inputs
-outputs
+# inputs
+outputs/*
 *__pycache__*
 exp.ipynb
 *.log
